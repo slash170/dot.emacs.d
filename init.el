@@ -287,5 +287,8 @@ and source-file directory for your debugger." t)
           '(lambda ()
 	     ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
 	     (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
-		 (flymake-mode))
-	     ))
+		 (flymake-mode))))
+
+(add-hook 'ruby-mode-hook
+ '(lambda ()
+    (define-key ruby-mode-map "\C-cd" 'flymake-display-err-menu-for-current-line)))

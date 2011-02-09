@@ -84,11 +84,19 @@
 (define-key global-map (kbd "M-k") 'kill-this-buffer)
 ;; "C-t" でウィンドウを切り替える。初期値は transpose-chars
 (define-key global-map (kbd "C-t") 'other-window)
-
+;; ¥の代わりにバックスラッシュを入力する
+(define-key global-map [?¥] [?\\])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  拡張機能
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; info 設定
+;; (require 'info)
+;; (setq Info-directory-list
+;;       ;; (cons (expand-file-name "~/.emacs.d/info")
+;;       (cons (expand-file-name "~/info")
+;; 	    Info-directory-list))
+
 ;;; auto-install.el
 (when (require 'auto-install nil t)
   (setq auto-install-directory "~/.emacs.d/elisp/")
@@ -255,3 +263,29 @@
 the directory containing file becomes the initial working directory
 and source-file directory for your debugger." t)
 
+;; flymake ruby
+(require 'flymake)
+
+;; I don't like the default colors :)
+(set-face-background 'flymake-errline "red4")
+(set-face-background 'flymake-warnline "dark slate blue")
+
+;; Invoke ruby with '-c' to get syntax checking
+(defun flymake-ruby-init ()
+  (let* ((temp-file   (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+	 (local-file  (file-relative-name
+                       temp-file
+                       (file-name-directory buffer-file-name))))
+    (list "ruby" (list "-c" local-file))))
+
+(push '(".+\\.rb$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("Rakefile$" flymake-ruby-init) flymake-allowed-file-name-masks)
+(push '("^\\(.*\\):\\([0-9]+\\): \\(.*\\)$" 1 2 nil 3) flymake-err-line-patterns)
+
+(add-hook 'ruby-mode-hook
+          '(lambda ()
+	     ;; Don't want flymake mode for ruby regions in rhtml files and also on read only files
+	     (if (and (not (null buffer-file-name)) (file-writable-p buffer-file-name))
+		 (flymake-mode))
+	     ))

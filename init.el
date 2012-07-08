@@ -46,8 +46,8 @@
 ;; 画面サイズ
 (if window-system
     (progn (setq initial-frame-alist
-;;		 '((width . 130) (height . 25)))))
-		 '((width . 130) ))))
+		 '((width . 130) (height . 40)))))
+;;		 '((width . 130) ))))
 		 
 ;; color-theme
 (when window-system

@@ -459,8 +459,9 @@ and source-file directory for your debugger." t)
 
 ;; ghc-mod
 (autoload 'ghc-init "ghc" nil t)
-(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
-;;(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+(add-hook 'haskell-mode-hook 'haskell-style)
 
 ;; haskell-mode
 (load "haskell-site-file")

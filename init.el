@@ -465,14 +465,8 @@ and source-file directory for your debugger." t)
 
 ;; ghc-mod
 (autoload 'ghc-init "ghc" nil t)
-(add-hook 'haskell-mode-hook (lambda ()
-			      (ghc-init)
-			      (local-set-key "C-j" (lambda () (interactive)(insert " -> ")))
-			      (local-set-key "M-j" (lambda () (interactive)(insert " => ")))
-			      (local-set-key "C-l" (lambda () (interactive)(insert " <- ")))
-			      ))
-
-;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
+;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) ))
+(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 ;;(add-hook 'haskell-mode-hook 'haskell-style)
 
 (defadvice inferior-haskell-load-file (after change-focus-after-load)
@@ -484,9 +478,6 @@ and source-file directory for your debugger." t)
 ;; auto-complete
 (require 'auto-complete)
 (global-auto-complete-mode t)
-
-(define-key ac-complete-mode-map "C-n" 'ac-next)
-(define-key ac-complete-mode-map "C-p" 'ac-previous)
 
 ;;http://d.hatena.ne.jp/TakashiHattori/20120629/1340942555
 (add-hook 'emacs-startup-hook

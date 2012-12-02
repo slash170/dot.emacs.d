@@ -13,8 +13,8 @@
         (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
             (normal-top-level-add-subdirs-to-load-path))))))
 
-;; elispとconfディレクトリをサブディレクトリごとload-pathに追加
-(add-to-load-path "elisp" "conf")
+;; elispとconf,elpaディレクトリをサブディレクトリごとload-pathに追加
+(add-to-load-path "elisp" "conf" "elpa")
 ;;; conf ディレクトリ内の設定ファイルの読み込み方法の例
 ;; ~/.emacs.d/conf/init-anything.el というファイルを読み込む場合
 ;; (load "init-anything")
@@ -39,6 +39,12 @@
 (cua-mode t)
 (setq cua-enable-cua-keys nil)
 
+;; Emacs 24.2 向け
+;; package-list の設定
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  画面設定
@@ -53,9 +59,9 @@
 (when window-system
   (require 'color-theme nil t)
   (color-theme-initialize)
-  (color-theme-arjen))
+  (color-theme-snow))
 ;; 透明化
-(set-frame-parameter nil 'alpha 90 )
+;; (set-frame-parameter nil 'alpha 90 )
 ;; 行番号の表示
 (global-linum-mode)
 ;; メニューバーにファイルパスを表示する
@@ -459,9 +465,34 @@ and source-file directory for your debugger." t)
 
 ;; ghc-mod
 (autoload 'ghc-init "ghc" nil t)
+(add-hook 'haskell-mode-hook (lambda ()
+			      (ghc-init)
+			      (local-set-key "C-j" (lambda () (interactive)(insert " -> ")))
+			      (local-set-key "M-j" (lambda () (interactive)(insert " => ")))
+			      (local-set-key "C-l" (lambda () (interactive)(insert " <- ")))
+			      ))
+
 ;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
-(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-(add-hook 'haskell-mode-hook 'haskell-style)
+;;(add-hook 'haskell-mode-hook 'haskell-style)
+
+(defadvice inferior-haskell-load-file (after change-focus-after-load)
+  "Change focus to GHCi window after C-c C-l command"
+  (other-window 1))
+
+(ad-activate 'inferior-haskell-load-file)
+
+;; auto-complete
+(require 'auto-complete)
+(global-auto-complete-mode t)
+
+(define-key ac-complete-mode-map "C-n" 'ac-next)
+(define-key ac-complete-mode-map "C-p" 'ac-previous)
+
+;;http://d.hatena.ne.jp/TakashiHattori/20120629/1340942555
+(add-hook 'emacs-startup-hook
+	  (function (lambda ()
+		      (require 'auto-complete-config)
+		      (ac-config-default))))
 
 ;; haskell-mode
 (load "haskell-site-file")
@@ -469,4 +500,3 @@ and source-file directory for your debugger." t)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-

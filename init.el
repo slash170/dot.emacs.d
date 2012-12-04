@@ -20,6 +20,12 @@
 ;; (load "init-anything")
 ;; で読み込み可能です。
 
+;; Beep音を消す
+(setq ring-bell-function '(lambda ()))
+
+;; ツールバーを非表示
+(tool-bar-mode -1)
+
 ;; Emacsからの質問を y/n で回答する
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -120,6 +126,7 @@
 ;;; auto-install.el
 (when (require 'auto-install nil t)
   (setq auto-install-directory "~/.emacs.d/elisp/")
+  (setq auto-install-use-wget nil)
   (auto-install-update-emacswiki-package-name t)
   (auto-install-compatibility-setup))
 
